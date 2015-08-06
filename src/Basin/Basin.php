@@ -35,6 +35,7 @@ class Basin extends PluginBase implements Listener{
 			$this->opts = ["host" => $host, "user" => $user, "password" => $password, "schema" => $schema, "max" => $slots];
 			yaml_emit_file($cp, $this->opts);
 		}
+		$this->getServer()->getScheduler()->scheduleRepeatingTask(new FireQueryTask($this), 1);
 	}
 	private function readLine(){
 		$this->el = true;
@@ -63,8 +64,9 @@ class Basin extends PluginBase implements Listener{
 	}
 	public function onPreLogin(PlayerPreLoginEvent $ev){
 		if(count($this->getServer()->getOnlinePlayers()) < $this->opts["max"]) return;
-		if(true){ // TODO fire event
-			$this->getServer()->getPluginManager("FastTransfer")->transferPlayer($ev->getPlayer(), $this->ip, $this->port, "This server is full :(");
+		$this->getServer()->getPluginManager()->callEvent($bpe = new BalancePlayerEvent($this, $ev->getPlayer(), $this->ip, $this->port));
+		if(!$ev->isCancelled()){ // TODO fire event
+			$this->getServer()->getPluginManager("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp, $bpe->getPort(), "This server is full :(");
 		}
 	}
 }
