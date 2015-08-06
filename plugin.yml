@@ -1,0 +1,8 @@
+name: Basin
+main: Basin\Basin
+description: The ultimate PocketMine-MP load balancing solution
+version: 1.0.0
+api: 1.12.0
+depend: [FastTransfer]
+author: PEMapModder
+
