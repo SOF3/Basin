@@ -28,7 +28,7 @@ class Basin extends PluginBase implements Listener{
 			$schema = $this->readLine();
 			echo "[?] What is the server slot limit? It must be smaller than or equal to max-players in server.properties. ";
 			$slots = (int) $this->readLine();
-			$db = new \mysqli($host, $user, $password);
+			$db = @new \mysqli($host, $user, $password);
 			if($db->connect_error) throw new \RuntimeException("Could not connect to MySQL database: $db->connect_error");
 			$db->query("CREATE SCHEMA IF NOT EXISTS `$schema`");
 			$db->query("CREATE TABLE IF NOT EXISTS `$schema`.basin (sid CHAR(31) PRIMARY KEY, ip VARCHAR(63), port SMALLINT, online SMALLINT, max SMALLINT, laston TIMESTAMP)");
@@ -51,8 +51,8 @@ class Basin extends PluginBase implements Listener{
 	 */
 	public function onCmd(ServerCommandEvent $ev){
 		if($this->el){
-			$this->line = $ev->getMessage();
-			$ev->setMessage("");
+			$this->line = $ev->getCommand();
+			$ev->setCommand("");
 			$ev->setCancelled();
 		}
 	}
