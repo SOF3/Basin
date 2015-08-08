@@ -67,7 +67,7 @@ class Basin extends PluginBase implements Listener{
 		if(count($this->getServer()->getOnlinePlayers()) < $this->opts["max"]) return;
 		$this->getServer()->getPluginManager()->callEvent($bpe = new BalancePlayerEvent($this, $ev->getPlayer(), $this->ip, $this->port));
 		if(!$ev->isCancelled()){ // TODO fire event
-			$this->getServer()->getPluginManager("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp, $bpe->getPort(), "This server is full :(");
+			$this->getServer()->getPluginManager()->getPlugin("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp, $bpe->getPort(), "This server is full :(");
 		}
 	}
 }
