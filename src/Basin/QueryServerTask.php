@@ -17,7 +17,7 @@ class QueryServerTask extends AsyncTask{
 		extract($this->data);
 		$ip = Utils::getIP();
 		$db->query("INSERT INTO basin (sid, ip, port, online, max, laston) VALUES ('{$db->escape_string($sid)}', '{$db->escape_string($ip)}', $port, $online, $max, CURRENT_TIMESTAMP) ON DUPLICATE KEY UPDATE ip='{$db->escape_string($ip)}', port=$port, online=$online, max=$max, laston=CURRENT_TIMESTAMP");
-		$alt = $db->query("SELECT ip,port WHERE unix_timestamp()-unix_timestamp(laston)<5 AND sid='{$db->escape_string($sid)}' AND max>online ORDER BY max-online DESC LIMIT 1");
+		$alt = $db->query("SELECT ip,port WHERE unix_timestamp()-unix_timestamp(laston)<5 AND sid != '{$db->escape_string($sid)}' AND max>online ORDER BY max-online DESC LIMIT 1");
 		$r = $alt->fetch_assoc();
 		$alt->close();
 		$this->setResult($r);

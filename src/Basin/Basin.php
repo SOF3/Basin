@@ -10,7 +10,7 @@ use pocketmine\plugin\PluginBase;
 class Basin extends PluginBase implements Listener{
 	private $opts;
 	private $line = null;
-	private $ip, $port;
+	private $ip = null, $port = nul;
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$cp = $this->getDataFolder() . "config.yml";
@@ -67,7 +67,11 @@ class Basin extends PluginBase implements Listener{
 		if(count($this->getServer()->getOnlinePlayers()) < $this->opts["max"]) return;
 		$this->getServer()->getPluginManager()->callEvent($bpe = new BalancePlayerEvent($this, $ev->getPlayer(), $this->ip, $this->port));
 		if(!$ev->isCancelled()){ // TODO fire event
-			$this->getServer()->getPluginManager("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp, $bpe->getPort(), "This server is full :(");
+			if($bpe->getIp() === null or $bpe->getPort() === null){
+				$ev->getPlayer()->kick("%disconnectScreen.serverFull", false);
+			}else{
+				$this->getServer()->getPluginManager("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp(), $bpe->getPort(), "This server is full :(");
+			}
 		}
 	}
 }
