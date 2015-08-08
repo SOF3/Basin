@@ -70,7 +70,7 @@ class Basin extends PluginBase implements Listener{
 			if($bpe->getIp() === null or $bpe->getPort() === null){
 				$ev->getPlayer()->kick("%disconnectScreen.serverFull", false);
 			}else{
-				$this->getServer()->getPluginManager("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp(), $bpe->getPort(), "This server is full :(");
+				$this->getServer()->getPluginManager()->getPlugin("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp(), $bpe->getPort(), "This server is full :(");
 			}
 		}
 	}
