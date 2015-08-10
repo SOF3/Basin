@@ -9,8 +9,8 @@ use pocketmine\plugin\PluginBase;
 
 class Basin extends PluginBase implements Listener{
 	private $opts;
-	private $line = null;
-	private $ip = null, $port = nul;
+	private $line = null, $el = false;
+	private $ip = null, $port = null;
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$cp = $this->getDataFolder() . "config.yml";
