@@ -10,10 +10,12 @@ use pocketmine\plugin\PluginBase;
 
 class Basin extends PluginBase implements Listener{
 	private $opts;
+	private $transferAgentsManager;
 	private $line = null, $el = false;
 	private $ip = null, $port = null;
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		$this->transferAgentsManager = new TransferAgentsManager($this);
 		$cp = $this->getDataFolder() . "config.yml";
 		if(is_file($cp)) $this->opts = yaml_parse_file($cp);
 		else{
@@ -63,14 +65,15 @@ class Basin extends PluginBase implements Listener{
 	public function getOpts(){
 		return $this->opts;
 	}
-	public function setAltServer($ip, $port){
+	public function setAltServer(string $ip, int $port){
 		$this->ip = $ip;
 		$this->port = $port;
 	}
 	public function onPreLogin(PlayerPreLoginEvent $ev){
 		if(count($this->getServer()->getOnlinePlayers()) < $this->opts["max"]) return;
 		$this->getServer()->getPluginManager()->callEvent($bpe = new BalancePlayerEvent($this, $ev->getPlayer(), $this->ip, $this->port));
-		if(!$ev->isCancelled()){ // TODO fire event
+		if(!$ev->isCancelled()){
+			#$this->getServer()->getPluginManager()->callEvent($bpe = new BalancePlayerAbortEvent($this, $ev->getPlayer(), $this->ip, $this->port));
 			if($bpe->getIp() === null or $bpe->getPort() === null){
 				$ev->getPlayer()->kick("%disconnectScreen.serverFull", false);
 			}else{
@@ -78,10 +81,8 @@ class Basin extends PluginBase implements Listener{
 			}
 		}
 	}
+	
 	public function transferPlayer(Player $player, string $ip, int $port, string $message){
-		$pk = new TransferPacket;
-		$pk->address = $ip;
-		$pk->port = $port;
-		$player->dataPacket($pk);
+		$this->transferAgentsManager->getDefaultAgent($player, $ip, $port, $message);
 	}
 }
