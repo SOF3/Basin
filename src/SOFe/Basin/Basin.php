@@ -48,7 +48,6 @@ class Basin extends PluginBase implements Listener{
 				target INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 				name CHAR(31),
 				ip VARCHAR(63),
-				port SMALLINT,
 				source CHAR(31) REFERENCES `$schema`.basin(sid),
 				target CHAR(31) REFERENCES `$schema`.basin(sid),
 				updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
