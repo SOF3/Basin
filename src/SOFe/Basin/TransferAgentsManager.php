@@ -12,23 +12,12 @@ class TransferAgentsManager{
 	/**
 	  * Registers a TransferAgent
 	  *
-      * @return The Agent's saved name. This may be different from the Agent's real name due to collision.
+	  * @return The Agent's saved name. This may be different from the Agent's real name due to collision.
 	  */
 	public function registerTransferAgent(TransferAgent $agent){
 		if($agent->isReady()){
 			if(isset($this->agents[$agent->getName()])){
-				$this->main->getLogger()->debug("Agent '".$agent->getName()."' already exists, incrementing name.");
-				$i = 1;
-				$foundFreeName = false;
-				while(!$foundFreeName){
-					$name = $agent->getName().$i;
-					if(!isset($this->agents[$name])){
-						$foundFreeName = true;
-					}
-					$i++;
-				}
-				$this->agents[$name] = $agent;
-				return $name;
+				throw new \Exception("Tried to register ".$agent->getName()." twice.");
 			}
 			$this->agents[$agent->getName()] = $agent;
 			return $agent->getName();
@@ -36,7 +25,7 @@ class TransferAgentsManager{
 		return false;
 	}
 	public function setDefaultAgent(string $agentName){
-		if(!isset($this->agents[$agentName]){
+		if(!isset($this->agents[$agentName])){
 			return false;
 		}
 		$this->defaultAgent = $agentName;
