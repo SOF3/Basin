@@ -32,11 +32,27 @@ class Basin extends PluginBase implements Listener{
 			$db = @new \mysqli($host, $user, $password);
 			if($db->connect_error) throw new \RuntimeException("Could not connect to MySQL database: $db->connect_error");
 			$db->query("CREATE SCHEMA IF NOT EXISTS `$schema`");
-			$db->query("CREATE TABLE IF NOT EXISTS `$schema`.basin (sid CHAR(31) PRIMARY KEY, ip VARCHAR(63), port SMALLINT, online SMALLINT, max SMALLINT, laston TIMESTAMP)");
+			$db->query("CREATE TABLE IF NOT EXISTS `$schema`.basin (
+				sid CHAR(31) PRIMARY KEY,
+				ip VARCHAR(63),
+				port SMALLINT,
+				online SMALLINT,
+				max SMALLINT,
+				laston TIMESTAMP
+			)");
 			$db->query("INSERT INTO `$schema`.basin (sid, ip, port, online, max, laston) VALUES
 				('{$db->escape_string($this->getServer()->getUniqueId())}', '{$db->escape_string($host)}', {$this->getServer()->getPort()},
 				0, {$this->getServer()->getMaxPlayers()}, unix_timestamp())");
 			$db->close();
+			$db->query("CREATE TABLE IF NOT EXISTS `$schema`.droplets (
+				target INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+				name CHAR(31),
+				ip VARCHAR(63),
+				port SMALLINT,
+				source CHAR(31) REFERENCES `$schema`.basin(sid),
+				target CHAR(31) REFERENCES `$schema`.basin(sid),
+				updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			)");
 			$this->opts = ["host" => $host, "user" => $user, "password" => $password, "schema" => $schema, "max" => $slots];
 			yaml_emit_file($cp, $this->opts);
 		}
