@@ -2,6 +2,8 @@
 
 namespace SOFe\Basin;
 
+use pocketmine\network\protocol\TransferPacket;
+
 class StandardTransferAgent extends TransferAgent{
 	public function transferPlayer(Player $player, string $ip, int $port, string $message){
 		parent::transferPlayer($player, $ip, $port, $message);
