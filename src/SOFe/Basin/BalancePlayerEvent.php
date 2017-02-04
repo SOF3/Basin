@@ -1,6 +1,6 @@
 <?php
 
-namespace Basin;
+namespace SOFe\Basin;
 
 use pocketmine\Player;
 use pocketmine\event\Cancellable;

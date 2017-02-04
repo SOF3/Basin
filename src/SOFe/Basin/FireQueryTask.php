@@ -1,6 +1,6 @@
 <?php
 
-namespace Basin;
+namespace SOFe\Basin;
 
 use pocketmine\scheduler\PluginTask;
 
@@ -18,4 +18,3 @@ class FireQueryTask extends PluginTask{
 		if($this->last === null) $this->last = new QueryServerTask($this->getOwner());
 	}
 }
-

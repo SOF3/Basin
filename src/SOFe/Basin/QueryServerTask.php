@@ -1,6 +1,6 @@
 <?php
 
-namespace Basin;
+namespace SOFe\Basin;
 
 use pocketmine\scheduler\AsyncTask;
 
@@ -32,4 +32,3 @@ class QueryServerTask extends AsyncTask{
 		return $r;
 	}
 }
-

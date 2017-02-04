@@ -1,10 +1,11 @@
 <?php
 
-namespace Basin;
+namespace SOFe\Basin;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\server\ServerCommandEvent;
+use pocketmine\network\protocol\TransferPacket;
 use pocketmine\plugin\PluginBase;
 
 class Basin extends PluginBase implements Listener{
@@ -73,9 +74,14 @@ class Basin extends PluginBase implements Listener{
 			if($bpe->getIp() === null or $bpe->getPort() === null){
 				$ev->getPlayer()->kick("%disconnectScreen.serverFull", false);
 			}else{
-				$this->getServer()->getPluginManager()->getPlugin("FastTransfer")->transferPlayer($ev->getPlayer(), $bpe->getIp(), $bpe->getPort(), "This server is full :(");
+				$this->transferPlayer($ev->getPlayer(), $bpe->getIp(), $bpe->getPort(), "This server is full :(");
 			}
 		}
 	}
+	public function transferPlayer(Player $player, string $ip, int $port, string $message){
+		$pk = new TransferPacket;
+		$pk->address = $ip;
+		$pk->port = $port;
+		$player->dataPacket($pk);
+	}
 }
-
