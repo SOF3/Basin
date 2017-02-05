@@ -12,6 +12,7 @@ class Basin extends PluginBase implements Listener{
 	private $opts;
 	private $line = null, $el = false;
 	private $ip = null, $port = null;
+	
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		$cp = $this->getDataFolder() . "config.yml";
@@ -57,6 +58,7 @@ class Basin extends PluginBase implements Listener{
 		}
 		$this->getServer()->getScheduler()->scheduleRepeatingTask(new FireQueryTask($this), 1);
 	}
+	
 	private function readLine(){
 		$this->el = true;
 		while($this->line === null) $this->getServer()->checkConsole();
@@ -68,13 +70,14 @@ class Basin extends PluginBase implements Listener{
 	/**
 	 * @priority LOWEST
 	 */
-	public function onCmd(ServerCommandEvent $ev){
+	public function onServerCmd(ServerCommandEvent $ev){
 		if($this->el){
 			$this->line = $ev->getCommand();
 			$ev->setCommand("");
 			$ev->setCancelled();
 		}
 	}
+	
 	public function getOpts(){
 		return $this->opts;
 	}
@@ -82,18 +85,28 @@ class Basin extends PluginBase implements Listener{
 		$this->ip = $ip;
 		$this->port = $port;
 	}
+	
 	public function onPreLogin(PlayerPreLoginEvent $ev){
 		if(count($this->getServer()->getOnlinePlayers()) < $this->opts["max"]) return;
-		$this->getServer()->getPluginManager()->callEvent($bpe = new BalancePlayerEvent($this, $ev->getPlayer(), $this->ip, $this->port));
-		if(!$ev->isCancelled()){ // TODO fire event
-			if($bpe->getIp() === null or $bpe->getPort() === null){
+		$this->getServer()->getPluginManager()->callEvent($tpev = new TransferPlayerEvent($this, $ev->getPlayer(), $this->ip, $this->port, "This server is full :("));
+		if(!$ev->isCancelled()){
+			if($tpev->getIp() === null or $tpev->getPort() === null){
 				$ev->getPlayer()->kick("%disconnectScreen.serverFull", false);
 			}else{
-				$this->transferPlayer($ev->getPlayer(), $bpe->getIp(), $bpe->getPort(), "This server is full :(");
+				$this->rawTransfer($ev->getPlayer(), $tpev->getIp(), $tpev->getPort(), $tpev->getMessage(), false);
 			}
 		}
 	}
-	public function transferPlayer(Player $player, string $ip, int $port, string $message){
+	
+	public function transferPlayer(Player $player, string $ip, int $port, string $message = "", int $cause = TransferPlayerEvent::CAUSE_CUSTOM): bool{
+		$this->getServer()->getPluginManager()->callEvent($tpev = new TransferPlayerEvent($this, $player, $ip, $port, $message, $cause));
+		if($ev->isCancelled()){
+			return false:
+		}
+		$this->rawTransfer($player, $ip, $port, $message);
+		return true;
+	}
+	private function rawTransfer(Player $player, string $ip, int $port, string $message = ""){
 		$pk = new TransferPacket;
 		$pk->address = $ip;
 		$pk->port = $port;

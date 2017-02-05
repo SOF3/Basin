@@ -6,12 +6,14 @@ use pocketmine\scheduler\AsyncTask;
 
 class QueryServerTask extends AsyncTask{
 	private $data;
+	
 	public function __construct(Basin $basin){
 		$this->data = $basin->getOpts();
 		$this->data["online"] = count($basin->getServer()->getOnlinePlayers());
 		$this->data["sid"] = $basin->getServer()->getServerUniqueId();
 		$this->data["port"] = $basin->getServer()->getPort();
 	}
+	
 	public function onRun(){
 		$db = $this->getDb();
 		extract($this->data);
@@ -22,6 +24,7 @@ class QueryServerTask extends AsyncTask{
 		$alt->close();
 		$this->setResult($r);
 	}
+	
 	public function getDb(){
 		$r = $this->getFromThreadStore("basin.mysqli");
 		if(!($r instanceof \mysqli)){

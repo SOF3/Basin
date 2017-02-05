@@ -6,6 +6,7 @@ use pocketmine\scheduler\PluginTask;
 
 class FireQueryTask extends PluginTask{
 	private $last = null;
+	
 	public function onRun($t){
 		if($this->last !== null and $this->last->hasResult()){
 			$ret = $this->last->getResult();
