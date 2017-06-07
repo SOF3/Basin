@@ -7,3 +7,12 @@ depend: [FastTransfer]
 authors:
 - PEMapModder
 - SOFe
+
+permissions:
+  Basin:
+    description: "Allows access to everything Basin has."
+    default: false
+    children:
+      transfer:
+        description: "Allows to run the /warn command"
+        default: op

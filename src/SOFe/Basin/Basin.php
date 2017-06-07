@@ -7,6 +7,7 @@ use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\server\ServerCommandEvent;
 use pocketmine\network\protocol\TransferPacket;
 use pocketmine\plugin\PluginBase;
+use pocketmine\command\PluginCommand;
 
 class Basin extends PluginBase implements Listener{
 	private $opts;
@@ -15,6 +16,12 @@ class Basin extends PluginBase implements Listener{
 	
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
+		$cmd = new PluginCommand("transfer", $this);
+		$cmd->setDescription("Transfers players on other servers.");
+		$cmd->setUsage("/transfer <server> or /transfer <player> <server>");
+		$cmd->setPermission("Basin.transfer");
+		$cmd->setExecutor(new TransferCommandExecutor($this));
+		$this->getServer()->getCommandMap()->register($this->getDescription()->getName(), $cmd);
 		$cp = $this->getDataFolder() . "config.yml";
 		if(is_file($cp)) $this->opts = yaml_parse_file($cp);
 		else{
